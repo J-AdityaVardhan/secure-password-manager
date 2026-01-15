@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Regulation Management</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="admin-style.css">
+</head>
+
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg fixed-top">
+        <div class="container-fluid px-4">
+            <button class="btn btn-link me-3 fs-4" id="sidebarToggle">
+                <i class="bi bi-list"></i>
+            </button>
+            <a class="navbar-brand" href="#">
+                <i class="bi bi-mortarboard-fill me-2"></i>WEBSAGA Admin
+            </a>
+            <div class="ms-auto">
+                <span class="text-muted me-4 small">January 03, 2026</span>
+                <a href="../main.html" class="text-danger text-decoration-none" onclick="return confirm('Logout?')">
+                    Logout <i class="bi bi-box-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h4 class="sidebar-text">ADMIN PANEL</h4>
+        </div>
+        <ul class="sidebar-menu mt-3">
+            <li class="section-title sidebar-text">OVERVIEW</li>
+            <li><a href="Adashboard.html"><i class="bi bi-speedometer2"></i><span class="sidebar-text">
+                        Dashboard</span></a></li>
+
+            <li class="section-title sidebar-text mt-4">MASTER DATA</li>
+            <li><a href="programs.html"><i class="bi bi-diagram-3"></i><span class="sidebar-text"> Programs</span></a>
+            </li>
+            <li><a href="branches.html"><i class="bi bi-building"></i><span class="sidebar-text"> Departments</span></a>
+            </li>
+            <li><a href="regulations.html" class="active"><i class="bi bi-file-text"></i><span class="sidebar-text">
+                        Regulations</span></a></li>
+
+            <li class="section-title sidebar-text mt-4">ACADEMICS</li>
+            <li><a href="courses.html"><i class="bi bi-book"></i><span class="sidebar-text"> Courses</span></a></li>
+            <li>
+                <a href="course-plugins/index.html">
+                    <i class="bi bi-puzzle"></i>
+                    <span class="sidebar-text"> Course Plugins</span>
+                </a>
+            </li>
+            <li><a href="program-branch-mapping.html"><i class="bi bi-diagram-3"></i><span class="sidebar-text">
+                        Program-Branch Mapping</span></a></li>
+            <li><a href="branch-course-mapping.html"><i class="bi bi-link-45deg"></i><span class="sidebar-text">
+                        Branch-Course Mapping</span></a></li>
+
+            <li class="section-title sidebar-text mt-4">FACULTY</li>
+            <li><a href="faculty.html"><i class="bi bi-people"></i><span class="sidebar-text"> Faculty</span></a></li>
+            <li><a href="faculty-course-mapping.html"><i class="bi bi-link-45deg"></i><span class="sidebar-text">
+                        Faculty-Course Mapping</span></a></li>
+
+            <li class="section-title sidebar-text mt-4">QUESTION PAPER</li>
+            <li><a href="question-paper-generation.html"><i class="bi bi-file-earmark-text"></i><span
+                        class="sidebar-text"> Generate QP</span></a></li>
+        </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="container-fluid py-4">
+            <h3 class="mb-3"><i class="bi bi-file-text"></i> Regulation Management</h3>
+
+            <!-- Search + Add -->
+            <div class="card mb-3">
+                <div class="card-body row">
+                    <div class="col-md-6">
+                        <input type="text" id="searchInput" class="form-control" placeholder="Search Regulation..."
+                            onkeyup="searchRegulation()">
+                    </div>
+                    <div class="col-md-6 text-end">
+                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addModal">
+                            <i class="bi bi-plus-circle"></i> Add Regulation
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Table -->
+            <div class="card">
+                <div class="card-body">
+                    <table class="table table-hover" id="regulationTable">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>ID</th>
+                                <th>Regulation Name</th>
+                                <th>Year</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ADD MODAL -->
+    <div class="modal fade" id="addModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form onsubmit="addRegulation(event)">
+                    <div class="modal-header">
+                        <h5>Add Regulation</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="text" class="form-control mb-2" id="addName" placeholder="Regulation Name (AR23)"
+                            required>
+                        <input type="number" class="form-control mb-2" id="addYear" placeholder="Year" required>
+                        <select class="form-select" id="addStatus" required>
+                            <option value="">Select Status</option>
+                            <option value="Active">Active</option>
+                            <option value="Inactive">Inactive</option>
+                        </select>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-primary">Save</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- EDIT MODAL -->
+    <div class="modal fade" id="editModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form onsubmit="updateRegulation(event)">
+                    <div class="modal-header">
+                        <h5>Edit Regulation</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" id="editId">
+                        <input type="text" class="form-control mb-2" id="editName" required>
+                        <input type="number" class="form-control mb-2" id="editYear" required>
+                        <select class="form-select" id="editStatus" required>
+                            <option value="Active">Active</option>
+                            <option value="Inactive">Inactive</option>
+                        </select>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-success">Update</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        const KEY = 'wsg_regulations';
+
+        document.addEventListener('DOMContentLoaded', () => {
+            Auth.requireAuth(['admin']);
+            // Seed if empty
+            const existing = DB.getAll(KEY);
+            if (existing.length === 0) {
+                const seeds = [
+                    { name: "AR21", year: 2021, status: "Active" },
+                    { name: "AR23", year: 2023, status: "Active" },
+                    { name: "AR20", year: 2020, status: "Active" },
+                    { name: "AR19", year: 2019, status: "Active" },
+                    { name: "AR18", year: 2018, status: "Inactive" },
+                    { name: "R22", year: 2022, status: "Active" },
+                    { name: "R20", year: 2020, status: "Inactive" }
+                ];
+                seeds.forEach(s => DB.add(KEY, s));
+            }
+            renderTable();
+        });
+
+        /* --------- RENDER --------- */
+        function renderTable() {
+            const regulations = DB.getAll(KEY);
+            const tbody = document.querySelector("#regulationTable tbody");
+            tbody.innerHTML = "";
+
+            regulations.forEach(reg => {
+                const badgeClass = reg.status === "Active" ? "bg-success" : "bg-secondary";
+                tbody.innerHTML += `
+        <tr>
+            <td>${reg.id}</td>
+            <td>${reg.name}</td>
+            <td>${reg.year}</td>
+            <td>
+                <span class="badge ${badgeClass}">
+                    ${reg.status}
+                </span>
+            </td>
+            <td>
+                <button class="btn btn-warning btn-sm" onclick="editRegulation('${reg.id}')">
+                    <i class="bi bi-pencil"></i>
+                </button>
+                <button class="btn btn-danger btn-sm" onclick="deleteRegulation('${reg.id}')">
+                    <i class="bi bi-trash"></i>
+                </button>
+                <label class="status-toggle ms-2">
+                    <input type="checkbox" ${reg.status === "Active" ? "checked" : ""} 
+                    onchange="toggleStatus('${reg.id}')">
+                    <span class="slider"></span>
+                </label>
+            </td>
+        </tr>`;
+            });
+        }
+
+        /* --------- CRUD --------- */
+        function addRegulation(e) {
+            e.preventDefault();
+
+            const name = document.getElementById("addName").value.trim();
+            const year = document.getElementById("addYear").value;
+            const status = document.getElementById("addStatus").value;
+
+            if (!name || !year) {
+                alert("Please fill in all fields");
+                return;
+            }
+
+            const regulations = DB.getAll(KEY);
+            if (regulations.some(r => r.name.toLowerCase() === name.toLowerCase())) {
+                alert("Regulation name already exists!");
+                return;
+            }
+
+            DB.add(KEY, { name, year, status });
+            bootstrap.Modal.getInstance(document.getElementById("addModal")).hide();
+            e.target.reset();
+            renderTable();
+        }
+
+        function editRegulation(id) {
+            const r = DB.getById(KEY, id);
+            if (!r) return;
+            document.getElementById("editId").value = r.id;
+            document.getElementById("editName").value = r.name;
+            document.getElementById("editYear").value = r.year;
+            document.getElementById("editStatus").value = r.status;
+            new bootstrap.Modal(document.getElementById("editModal")).show();
+        }
+
+        function updateRegulation(e) {
+            e.preventDefault();
+
+            const id = document.getElementById("editId").value;
+            const name = document.getElementById("editName").value.trim();
+            const year = document.getElementById("editYear").value;
+            const status = document.getElementById("editStatus").value;
+
+            const regulations = DB.getAll(KEY);
+            if (regulations.some(r => r.name.toLowerCase() === name.toLowerCase() && r.id != id)) {
+                alert("Regulation name already exists!");
+                return;
+            }
+
+            DB.update(KEY, id, { name, year, status });
+            bootstrap.Modal.getInstance(document.getElementById("editModal")).hide();
+            renderTable();
+        }
+
+        function deleteRegulation(id) {
+            if (confirm("Delete regulation? Warning: This will delete ALL courses under this regulation!")) {
+                const regToDelete = DB.getById(KEY, id);
+                if (!regToDelete) return;
+
+                // Delete regulation
+                DB.delete(KEY, id);
+
+                // Cascade delete: Courses
+                const allCourses = DB.getAll('wsg_courses');
+                // Filter out courses that belong to this regulation
+                // Since DB doesn't support bulk delete by criteria, we filter and save remaining.
+                const remainingCourses = allCourses.filter(c => c.regulation !== regToDelete.name);
+
+                // Hack: We can't setAll via DB. But we can access localStorage directly for bulk replacement if needed, 
+                // OR we can't because DB module encapsulates it.
+                // Assuming I can't modify DB internals, I SHOULD loop DB.delete. 
+                // But efficient way is:
+                localStorage.setItem('wsg_courses', JSON.stringify(remainingCourses));
+
+                renderTable();
+            }
+        }
+
+        function toggleStatus(id) {
+            const r = DB.getById(KEY, id);
+            if (r) {
+                const newStatus = r.status === "Active" ? "Inactive" : "Active";
+                DB.update(KEY, id, { status: newStatus });
+                renderTable();
+            }
+        }
+
+        /* --------- SEARCH --------- */
+        function searchRegulation() {
+            const value = document.getElementById("searchInput").value.toLowerCase();
+            document.querySelectorAll("#regulationTable tbody tr").forEach(row => {
+                row.style.display = row.innerText.toLowerCase().includes(value) ? "" : "none";
+            });
+        }
+
+        // Sidebar
+        document.getElementById('sidebarToggle').addEventListener('click', () => {
+            document.getElementById('sidebar').classList.toggle('collapsed');
+        });
+
+        function logout() {
+            Auth.logout();
+        }
+    </script>
+
+    <!-- Core Modules -->
+    <script src="../js/db.js"></script>
+    <script src="../js/auth.js"></script>
+</body>
+
+</html>

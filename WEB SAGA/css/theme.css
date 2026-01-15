@@ -1,0 +1,103 @@
+/* Shared theme and animation utilities for WebSaga */
+:root {
+    /* Friendly, light palette */
+    --primary-color: #1f6feb; /* soft blue */
+    --secondary-color: #2dd4bf; /* teal */
+    --success-color: #16a34a;
+    --danger-color: #ef4444;
+    --warning-color: #f59e0b;
+    --info-color: #0ea5e9;
+    --light-bg: #fbfdff; /* very light */
+    --surface: #ffffff;
+    --muted: #6b7280;
+    --glass-bg: rgba(255,255,255,0.6);
+    --radius-lg: 12px;
+    --card-shadow: 0 8px 24px rgba(31, 78, 120, 0.06);
+    --soft-shadow: 0 4px 14px rgba(31, 78, 120, 0.04);
+}
+
+/* Gentle page background */
+body {
+    background: linear-gradient(180deg, #fbfdff 0%, #f4f9ff 100%);
+    color: #244256;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Smooth defaults */
+* { transition: all 0.25s ease; }
+
+/* Utility glass card */
+.glass {
+    background: var(--glass-bg);
+    backdrop-filter: blur(6px) saturate(1.05);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--card-shadow);
+    border: 1px solid rgba(255,255,255,0.55);
+}
+
+/* Buttons with subtle depth */
+.btn-cta {
+    background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+    color: white;
+    box-shadow: 0 6px 18px rgba(47, 128, 237, 0.18);
+    border: none;
+    border-radius: 10px;
+}
+.btn-cta:hover { transform: translateY(-3px) scale(1.01); }
+
+/* Card accent line */
+.card-accent {
+    position: relative;
+}
+.card-accent:before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 6px;
+    border-radius: 8px 0 0 8px;
+    background: linear-gradient(180deg, var(--primary-color), var(--secondary-color));
+}
+
+/* Simple animations */
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+}
+
+.animate-fade-up { animation: fadeInUp 0.6s cubic-bezier(.2,.9,.3,1) both; }
+
+.shimmer {
+    background: linear-gradient(90deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.2) 50%, rgba(255,255,255,0.06) 100%);
+    background-size: 200% 100%;
+    animation: shimmer 1.8s linear infinite;
+}
+
+/* Subtle floating icon effect */
+@keyframes floatY { 0% { transform: translateY(0); } 50% { transform: translateY(-6px); } 100% { transform: translateY(0); } }
+.float { animation: floatY 3.6s ease-in-out infinite; }
+
+/* Apply entrance animation once theme is loaded */
+.theme-loaded .main-content { animation: fadeInUp 0.6s ease both; }
+.theme-loaded .card { transform-origin: center; }
+
+/* Focus outlines for accessibility */
+:focus { outline: 3px solid rgba(45, 212, 191, 0.18); outline-offset: 2px; }
+
+/* Tiny helper spacing */
+.mt-6 { margin-top: 1.5rem; }
+.mb-6 { margin-bottom: 1.5rem; }
+
+/* Make alerts more visible */
+.alert { border-radius: 10px; box-shadow: var(--soft-shadow); }
+
+/* Responsive tweaks */
+@media (max-width: 768px) {
+    .btn-cta { padding: 10px 14px; }
+}

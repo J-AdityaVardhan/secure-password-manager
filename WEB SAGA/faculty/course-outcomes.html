@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Course Outcomes - WEBSAGA</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="../admin/admin-style.css">
+
+    <style>
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 40px;
+            height: 20px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            inset: 0;
+            background: #ccc;
+            border-radius: 20px;
+        }
+
+        .slider:before {
+            content: "";
+            position: absolute;
+            height: 14px;
+            width: 14px;
+            left: 3px;
+            bottom: 3px;
+            background: white;
+            border-radius: 50%;
+        }
+
+        input:checked+.slider {
+            background: var(--primary-color);
+        }
+
+        input:checked+.slider:before {
+            transform: translateX(20px);
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- NAVBAR -->
+    <nav class="navbar navbar-expand-lg fixed-top">
+        <div class="container-fluid px-4">
+            <button class="btn btn-link me-3 fs-4" id="sidebarToggle">
+                <i class="bi bi-list"></i>
+            </button>
+            <a class="navbar-brand" href="Fdashboard.html">
+                <i class="bi bi-mortarboard-fill me-2"></i>WEBSAGA Faculty
+            </a>
+            <div class="ms-auto">
+                <a href="../auth/change-password.html" class="text-muted me-4 small text-decoration-none">
+                    <i class="bi bi-key"></i> Change Password
+                </a>
+                <a href="#" class="text-danger text-decoration-none" onclick="handleLogout(); return false;">
+                    Logout <i class="bi bi-box-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- SIDEBAR -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h4 class="sidebar-text">FACULTY PANEL</h4>
+        </div>
+        <ul class="sidebar-menu mt-3">
+            <li class="section-title sidebar-text">DASHBOARD</li>
+            <li><a href="Fdashboard.html"><i class="bi bi-speedometer2"></i> Dashboard</a></li>
+
+            <li class="section-title sidebar-text mt-4">MY COURSES</li>
+            <li><a href="my-courses.html"><i class="bi bi-book"></i> My Courses</a></li>
+
+            <li class="section-title sidebar-text mt-4">COURSE MANAGEMENT</li>
+            <li><a href="course-outcomes.html" class="active"><i class="bi bi-bullseye"></i> Course Outcomes</a></li>
+
+            <li class="section-title sidebar-text mt-4">QUESTION PAPER</li>
+            <li><a href="generate-qp.html"><i class="bi bi-file-earmark-text"></i> Generate QP</a></li>
+        </ul>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+        <div class="container-fluid py-4">
+            <h3 class="mb-4"><i class="bi bi-bullseye"></i> Course Outcomes</h3>
+
+            <!-- TABLE -->
+            <div class="card">
+                <div class="card-body table-responsive">
+                    <table class="table table-hover" id="coTable">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>CO</th>
+                                <th>Description</th>
+                                <th>Course</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- EDIT MODAL -->
+    <div class="modal fade" id="editCOModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit CO</h5>
+                    <button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="editId">
+                    <label class="form-label">CO Code</label>
+                    <input class="form-control mb-3" id="editCode">
+                    <label class="form-label">Description</label>
+                    <textarea class="form-control mb-2" id="editDesc"></textarea>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-primary" onclick="updateCO()">Update</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        /* SIDEBAR */
+        document.getElementById('sidebarToggle').onclick = () =>
+            document.getElementById('sidebar').classList.toggle('collapsed');
+
+        /* LOGOUT */
+        function handleLogout() {
+            if (confirm("Are you sure you want to logout?")) {
+                window.location.href = "../main.html";
+            }
+        }
+
+        /* DATA */
+        // Load from storage or init default
+        let coData = JSON.parse(localStorage.getItem('wsg_course_outcomes')) || {};
+
+        // IF empty, seed with 5 COs for EACH of the 10 default courses
+        if (Object.keys(coData).length === 0) {
+            const defaultCodes = [
+                "21CS301T", "21CS302T", "21CS304P", "23CS401T", "23CS402T",
+                "21IT301T", "21IT302P", "21AM301T", "21AD301T", "21CB301T"
+            ];
+
+            let nextId = 1;
+            defaultCodes.forEach(code => {
+                for (let i = 1; i <= 5; i++) {
+                    coData[nextId] = {
+                        id: nextId,
+                        code: `CO${i}`,
+                        course: code,
+                        desc: `Understand and apply concepts related to Unit ${i} of the course.`,
+                        status: "active"
+                    };
+                    nextId++;
+                }
+            });
+            localStorage.setItem('wsg_course_outcomes', JSON.stringify(coData));
+        }
+
+        /* RENDER */
+        function loadCourseOutcomes() {
+            const tbody = document.querySelector("#coTable tbody");
+            tbody.innerHTML = "";
+
+            if (Object.keys(coData).length === 0) {
+                tbody.innerHTML = "<tr><td colspan='6' class='text-center'>No Course Outcomes found.</td></tr>";
+                return;
+            }
+
+            Object.keys(coData).forEach(id => {
+                const c = coData[id];
+                tbody.innerHTML += `
+        <tr>
+            <td>${id}</td>
+            <td>${c.code}</td>
+            <td>${c.desc}</td>
+            <td><span class="badge bg-light text-dark">${c.course}</span></td>
+            <td>
+                <span class="badge ${c.status === "active" ? "bg-success" : "bg-secondary"}">
+                    ${c.status}
+                </span>
+            </td>
+            <td>
+                <button class="btn btn-sm btn-outline-primary me-1" onclick="editCO(${id})">
+                    <i class="bi bi-pencil"></i>
+                </button>
+                <button class="btn btn-sm btn-outline-danger me-1" onclick="deleteCO(${id})">
+                    <i class="bi bi-trash"></i>
+                </button>
+                <label class="switch ms-1">
+                    <input type="checkbox" ${c.status === "active" ? "checked" : ""}
+                        onchange="toggleStatus(${id})">
+                    <span class="slider"></span>
+                </label>
+            </td>
+        </tr>`;
+            });
+            localStorage.setItem('wsg_course_outcomes', JSON.stringify(coData));
+        }
+        loadCourseOutcomes();
+
+        /* EDIT */
+        function editCO(id) {
+            editId.value = id;
+            editCode.value = coData[id].code;
+            editDesc.value = coData[id].desc;
+            new bootstrap.Modal(editCOModal).show();
+        }
+        function updateCO() {
+            const id = editId.value;
+            coData[id].code = editCode.value;
+            coData[id].desc = editDesc.value;
+            loadCourseOutcomes();
+            bootstrap.Modal.getInstance(editCOModal).hide();
+        }
+
+        /* DELETE */
+        function deleteCO(id) {
+            if (confirm("Delete this CO?")) {
+                delete coData[id];
+                loadCourseOutcomes();
+            }
+        }
+
+        /* TOGGLE */
+        function toggleStatus(id) {
+            coData[id].status = coData[id].status === "active" ? "inactive" : "active";
+            loadCourseOutcomes();
+        }
+    </script>
+
+</body>
+
+</html>

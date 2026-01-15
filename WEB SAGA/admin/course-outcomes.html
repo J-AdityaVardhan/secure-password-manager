@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Course Outcomes Management - WEBSAGA Admin</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="admin-style.css">
+
+    <style>
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 40px;
+            height: 20px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            inset: 0;
+            background: #ccc;
+            border-radius: 20px;
+        }
+
+        .slider:before {
+            content: "";
+            position: absolute;
+            height: 14px;
+            width: 14px;
+            left: 3px;
+            bottom: 3px;
+            background: white;
+            border-radius: 50%;
+        }
+
+        input:checked+.slider {
+            background: var(--primary-color);
+        }
+
+        input:checked+.slider:before {
+            transform: translateX(20px);
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- NAVBAR -->
+    <nav class="navbar navbar-expand-lg fixed-top">
+        <div class="container-fluid px-4">
+            <button class="btn btn-link me-3 fs-4" id="sidebarToggle">
+                <i class="bi bi-list"></i>
+            </button>
+            <a class="navbar-brand" href="Adashboard.html">
+                <i class="bi bi-mortarboard-fill me-2"></i>WEBSAGA Admin
+            </a>
+            <div class="ms-auto">
+                <a href="../main.html" class="text-danger text-decoration-none" onclick="return confirm('Logout?')">
+                    Logout <i class="bi bi-box-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- SIDEBAR -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h4 class="sidebar-text">ADMIN PANEL</h4>
+        </div>
+        <ul class="sidebar-menu mt-3">
+            <li class="section-title sidebar-text">OVERVIEW</li>
+            <li><a href="Adashboard.html"><i class="bi bi-speedometer2"></i> Dashboard</a></li>
+
+            <li class="section-title sidebar-text mt-4">MASTER DATA</li>
+            <li><a href="programs.html"><i class="bi bi-diagram-3"></i> Programs</a></li>
+            <li><a href="branches.html"><i class="bi bi-building"></i> Departments</a></li>
+            <li><a href="regulations.html"><i class="bi bi-file-text"></i> Regulations</a></li>
+
+            <li class="section-title sidebar-text mt-4">ACADEMICS</li>
+            <li><a href="courses.html"><i class="bi bi-book"></i> Courses</a></li>
+            <li><a href="course-outcomes.html" class="active"><i class="bi bi-bullseye"></i> Course Outcomes</a></li>
+            <li><a href="course-plugins/index.html"><i class="bi bi-puzzle"></i> Course Plugins</a></li>
+            <li><a href="program-branch-mapping.html"><i class="bi bi-diagram-3"></i> Program-Branch Mapping</a></li>
+            <li><a href="branch-course-mapping.html"><i class="bi bi-link-45deg"></i> Branch-Course Mapping</a></li>
+
+            <li class="section-title sidebar-text mt-4">FACULTY</li>
+            <li><a href="faculty.html"><i class="bi bi-people"></i> Faculty</a></li>
+            <li><a href="faculty-course-mapping.html"><i class="bi bi-link-45deg"></i> Faculty-Course Mapping</a></li>
+
+            <li class="section-title sidebar-text mt-4">QUESTION PAPER</li>
+            <li><a href="question-paper-generation.html"><i class="bi bi-file-earmark-text"></i> Generate QP</a></li>
+        </ul>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+        <div class="container-fluid py-4">
+            <div class="d-flex justify-content-between mb-4">
+                <h3><i class="bi bi-bullseye"></i> Master Course Outcomes</h3>
+                <button class="btn btn-primary" onclick="openAddModal()">
+                    <i class="bi bi-plus-lg"></i> Add New CO
+                </button>
+            </div>
+
+            <!-- FILTERS -->
+            <div class="card mb-4 glass-panel">
+                <div class="card-body row g-3">
+                    <div class="col-md-4">
+                        <select class="form-select" id="filterCourse" onchange="loadCourseOutcomes()">
+                            <option value="">All Courses</option>
+                            <!-- Populated Dynamically -->
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <input type="text" class="form-control" placeholder="Search COs..." id="searchBox"
+                            onkeyup="loadCourseOutcomes()">
+                    </div>
+                </div>
+            </div>
+
+            <!-- TABLE -->
+            <div class="card shadow-sm">
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0" id="coTable">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Course</th>
+                                    <th>CO Code</th>
+                                    <th>Description</th>
+                                    <th>Status</th>
+                                    <th class="text-end">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- EDIT MODAL -->
+    <div class="modal fade" id="editCOModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalTitle">Add CO</h5>
+                    <button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="editId">
+
+                    <label class="form-label">Course</label>
+                    <select class="form-select mb-3" id="editCourseSelect">
+                        <!-- Populated -->
+                    </select>
+
+                    <label class="form-label">CO Code</label>
+                    <input class="form-control mb-3" id="editCode" placeholder="e.g. CO1">
+
+                    <label class="form-label">Description</label>
+                    <textarea class="form-control mb-2" id="editDesc" rows="3"></textarea>
+                </div>
+                <!-- Status handling handled by toggle in table for now, or add field here if needed. 
+                     Keeping logic simple: New COs are Active. Edit keeps existing status unless toggled. -->
+                <div class="modal-footer">
+                    <button class="btn btn-primary" onclick="saveCO()">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        const KEY = 'wsg_course_outcomes';
+        /* SIDEBAR */
+        document.getElementById('sidebarToggle')?.addEventListener('click', () =>
+            document.getElementById('sidebar').classList.toggle('collapsed')
+        );
+
+        /* INIT */
+        document.addEventListener('DOMContentLoaded', () => {
+            Auth.requireAuth(['admin']);
+
+            // Migration check: Ensure Array
+            let raw = localStorage.getItem(KEY);
+            if (raw) {
+                try {
+                    const parsed = JSON.parse(raw);
+                    if (!Array.isArray(parsed)) {
+                        // Convert Object to Array
+                        const arr = Object.values(parsed);
+                        localStorage.setItem(KEY, JSON.stringify(arr));
+                    }
+                } catch (e) {
+                    localStorage.setItem(KEY, '[]');
+                }
+            } else {
+                // Seed
+                // No need to complex seed, user can add.
+            }
+
+            const allCourses = DB.getAll('wsg_courses');
+            const filterSelect = document.getElementById('filterCourse');
+            const modalSelect = document.getElementById('editCourseSelect');
+
+            allCourses.forEach(c => {
+                if (c.status === 'Active') {
+                    const opt = `<option value="${c.code}">${c.name} (${c.code})</option>`;
+                    filterSelect.innerHTML += opt;
+                    modalSelect.innerHTML += opt;
+                }
+            });
+
+            loadCourseOutcomes();
+        });
+
+        /* RENDER */
+        function loadCourseOutcomes() {
+            const coList = DB.getAll(KEY);
+            const allCourses = DB.getAll('wsg_courses');
+
+            const tbody = document.querySelector("#coTable tbody");
+            tbody.innerHTML = "";
+
+            const filterC = document.getElementById('filterCourse').value;
+            const search = document.getElementById('searchBox').value.toLowerCase();
+
+            const rows = coList.filter(c => {
+                const matchCourse = !filterC || c.course === filterC;
+                const matchSearch = !search ||
+                    c.code.toLowerCase().includes(search) ||
+                    (c.desc && c.desc.toLowerCase().includes(search)) ||
+                    c.course.toLowerCase().includes(search);
+                return matchCourse && matchSearch;
+            });
+
+            if (rows.length === 0) {
+                tbody.innerHTML = "<tr><td colspan='6' class='text-center py-4 text-muted'>No Course Outcomes found.</td></tr>";
+                return;
+            }
+
+            rows.forEach(c => {
+                const courseName = allCourses.find(x => x.code === c.course)?.name || c.course;
+                tbody.innerHTML += `
+        <tr>
+            <td>${c.id}</td>
+            <td><span class="badge bg-light text-dark border">${c.course}</span> <small class="text-muted d-block">${courseName}</small></td>
+            <td class="fw-bold">${c.code}</td>
+            <td>${c.desc}</td>
+            <td>
+                <span class="badge ${c.status === "Active" ? "bg-success" : "bg-secondary"}">
+                    ${c.status}
+                </span>
+            </td>
+            <td class="text-end">
+                <button class="btn btn-sm btn-outline-primary me-1" onclick="editCO('${c.id}')">
+                    <i class="bi bi-pencil"></i>
+                </button>
+                <button class="btn btn-sm btn-outline-danger me-1" onclick="deleteCO('${c.id}')">
+                    <i class="bi bi-trash"></i>
+                </button>
+                <label class="switch ms-1">
+                    <input type="checkbox" ${c.status === "Active" ? "checked" : ""}
+                        onchange="toggleStatus('${c.id}')">
+                    <span class="slider"></span>
+                </label>
+            </td>
+        </tr>`;
+            });
+        }
+
+        /* ADD / EDIT */
+        function openAddModal() {
+            document.getElementById('modalTitle').innerText = "Add New CO";
+            document.getElementById('editId').value = "";
+            document.getElementById('editCode').value = "";
+            document.getElementById('editDesc').value = "";
+            new bootstrap.Modal(document.getElementById('editCOModal')).show();
+        }
+
+        function editCO(id) {
+            const c = DB.getById(KEY, id);
+            if (!c) return;
+            document.getElementById('modalTitle').innerText = "Edit CO";
+            document.getElementById('editId').value = id;
+            document.getElementById('editCourseSelect').value = c.course;
+            document.getElementById('editCode').value = c.code;
+            document.getElementById('editDesc').value = c.desc;
+            new bootstrap.Modal(document.getElementById('editCOModal')).show();
+        }
+
+        function saveCO() {
+            const id = document.getElementById('editId').value;
+            const course = document.getElementById('editCourseSelect').value;
+            const code = document.getElementById('editCode').value;
+            const desc = document.getElementById('editDesc').value;
+
+            if (!course || !code || !desc) {
+                alert("Please fill all fields");
+                return;
+            }
+
+            if (id) {
+                // Update
+                DB.update(KEY, id, { course, code, desc });
+            } else {
+                // Add
+                DB.add(KEY, { course, code, desc, status: "Active" });
+            }
+
+            loadCourseOutcomes();
+            bootstrap.Modal.getInstance(document.getElementById('editCOModal')).hide();
+        }
+
+        /* ACTIONS */
+        function deleteCO(id) {
+            if (confirm("Delete this CO?")) {
+                DB.delete(KEY, id);
+                loadCourseOutcomes();
+            }
+        }
+
+        function toggleStatus(id) {
+            const c = DB.getById(KEY, id);
+            if (c) {
+                const newStatus = c.status === "Active" ? "Inactive" : "Active";
+                DB.update(KEY, id, { status: newStatus });
+                loadCourseOutcomes();
+            }
+        }
+
+        function logout() {
+            Auth.logout();
+        }
+    </script>
+
+    <!-- Core Modules -->
+    <script src="../js/db.js"></script>
+    <script src="../js/auth.js"></script>
+
+</body>
+
+</html>

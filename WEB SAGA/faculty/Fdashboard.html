@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Faculty Dashboard - WEBSAGA</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="../admin/admin-style.css">
+</head>
+
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg fixed-top">
+        <div class="container-fluid px-4">
+            <button class="btn btn-link me-3 fs-4" id="sidebarToggle">
+                <i class="bi bi-list"></i>
+            </button>
+            <a class="navbar-brand" href="Fdashboard.html">
+                <i class="bi bi-mortarboard-fill me-2"></i>WEBSAGA Faculty
+            </a>
+            <div class="ms-auto">
+                <a href="../auth/change-password.html" class="text-muted me-4 small text-decoration-none">
+                    <i class="bi bi-key"></i> Change Password
+                </a>
+                <a href="#" class="text-danger text-decoration-none" onclick="handleLogout(); return false;">
+                    Logout <i class="bi bi-box-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h4 class="sidebar-text">FACULTY PANEL</h4>
+        </div>
+        <ul class="sidebar-menu mt-3">
+            <li class="section-title sidebar-text">DASHBOARD</li>
+            <li><a href="Fdashboard.html" class="active"><i class="bi bi-speedometer2"></i><span class="sidebar-text">
+                        Dashboard</span></a></li>
+
+            <li class="section-title sidebar-text mt-4">MY COURSES</li>
+            <li><a href="my-courses.html"><i class="bi bi-book"></i><span class="sidebar-text"> My Courses</span></a>
+            </li>
+
+            <li class="section-title sidebar-text mt-4">COURSE MANAGEMENT</li>
+            <li><a href="course-outcomes.html"><i class="bi bi-bullseye"></i><span class="sidebar-text"> Course
+                        Outcomes</span></a></li>
+
+            <li class="section-title sidebar-text mt-4">QUESTION PAPER</li>
+            <li><a href="generate-qp.html"><i class="bi bi-file-earmark-text"></i><span class="sidebar-text"> Generate
+                        QP</span></a></li>
+        </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="container-fluid py-4">
+            <div class="page-header">
+                <h2><i class="bi bi-speedometer2"></i> Faculty Dashboard</h2>
+                <p>Welcome to WEBSAGA Faculty Panel</p>
+            </div>
+
+            <!-- Statistics Cards -->
+            <div class="row mb-4">
+                <div class="col-md-3 mb-3">
+                    <div class="stat-card text-center">
+                        <div class="stat-icon text-primary">
+                            <i class="bi bi-book"></i>
+                        </div>
+                        <div class="stat-value" id="count-my-courses">0</div>
+                        <div class="stat-label">My Courses</div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <div class="stat-card text-center">
+                        <div class="stat-icon text-success">
+                            <i class="bi bi-question-circle"></i>
+                        </div>
+                        <div class="stat-value" id="count-questions">0</div>
+                        <div class="stat-label">Questions Added</div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <div class="stat-card text-center">
+                        <div class="stat-icon text-warning">
+                            <i class="bi bi-bullseye"></i>
+                        </div>
+                        <div class="stat-value" id="count-outcomes">0</div>
+                        <div class="stat-label">Course Outcomes</div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <div class="stat-card text-center">
+                        <div class="stat-icon text-info">
+                            <i class="bi bi-file-earmark-text"></i>
+                        </div>
+                        <div class="stat-value" id="count-qps">0</div>
+                        <div class="stat-label">Question Papers</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- My Courses Overview -->
+            <div class="row mb-4">
+                <div class="col-md-8 mb-3">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0"><i class="bi bi-book"></i> My Courses</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <div class="card border-primary">
+                                        <div class="card-body">
+                                            <h6 class="card-title text-primary">Data Structures</h6>
+                                            <p class="card-text mb-1"><small>Code: CS201</small></p>
+                                            <p class="card-text mb-1"><small>Branch: CSE</small></p>
+                                            <p class="card-text mb-0"><small>Year: 2, Semester: 3</small></p>
+                                            <a href="my-courses.html" class="btn btn-sm btn-primary mt-2">View
+                                                Details</a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <div class="card border-success">
+                                        <div class="card-body">
+                                            <h6 class="card-title text-success">Algorithms</h6>
+                                            <p class="card-text mb-1"><small>Code: CS202</small></p>
+                                            <p class="card-text mb-1"><small>Branch: IT</small></p>
+                                            <p class="card-text mb-0"><small>Year: 2, Semester: 4</small></p>
+                                            <a href="my-courses.html" class="btn btn-sm btn-success mt-2">View
+                                                Details</a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <div class="card border-warning">
+                                        <div class="card-body">
+                                            <h6 class="card-title text-warning">Database Systems</h6>
+                                            <p class="card-text mb-1"><small>Code: CS301</small></p>
+                                            <p class="card-text mb-1"><small>Branch: AIML</small></p>
+                                            <p class="card-text mb-0"><small>Year: 3, Semester: 5</small></p>
+                                            <a href="my-courses.html" class="btn btn-sm btn-warning mt-2">View
+                                                Details</a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <div class="card border-info">
+                                        <div class="card-body">
+                                            <h6 class="card-title text-info">Operating Systems</h6>
+                                            <p class="card-text mb-1"><small>Code: CS302</small></p>
+                                            <p class="card-text mb-1"><small>Branch: AI-DS</small></p>
+                                            <p class="card-text mb-0"><small>Year: 3, Semester: 6</small></p>
+                                            <a href="my-courses.html" class="btn btn-sm btn-info mt-2">View Details</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0"><i class="bi bi-clock-history"></i> Recent Activities</h5>
+                        </div>
+                        <div class="card-body">
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <i class="bi bi-plus-circle text-success"></i> Question Added
+                                    </div>
+                                    <small class="text-muted">2 hours ago</small>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <i class="bi bi-pencil text-primary"></i> Course Outcome Updated
+                                    </div>
+                                    <small class="text-muted">5 hours ago</small>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <i class="bi bi-file-earmark-text text-info"></i> Question Paper Generated
+                                    </div>
+                                    <small class="text-muted">1 day ago</small>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <i class="bi bi-upload text-warning"></i> Bulk Upload Completed
+                                    </div>
+                                    <small class="text-muted">2 days ago</small>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0"><i class="bi bi-lightning"></i> Quick Actions</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="d-flex flex-wrap gap-2">
+                                <a href="my-courses.html" class="btn btn-primary">
+                                    <i class="bi bi-book"></i> View My Courses
+                                </a>
+                                <a href="course-outcomes.html" class="btn btn-success">
+                                    <i class="bi bi-bullseye"></i> Manage Course Outcomes
+                                </a>
+                                <a href="question-bank.html" class="btn btn-info">
+                                    <i class="bi bi-question-circle"></i> Add Questions
+                                </a>
+                                <a href="question-bank.html" class="btn btn-warning">
+                                    <i class="bi bi-upload"></i> Bulk Upload
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../js/script.js"></script>
+    <script>
+        // Sidebar Toggle
+        document.getElementById('sidebarToggle').addEventListener('click', () => {
+            document.getElementById('sidebar').classList.toggle('collapsed');
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // 1. Security
+            Auth.requireAuth(['faculty']);
+            const user = Auth.getUser();
+
+            // 2. Personalize
+            if (user) {
+                // Could update welcome message here
+            }
+
+            // 3. Stats
+            const counts = DB.getCounts();
+
+            // For faculty, "My Courses" might be filtered. For now, use total courses or specific logic
+            // Mocking "My Courses" as 5 for now until we implement the filter in DB
+            document.getElementById('count-my-courses').textContent = "5";
+            document.getElementById('count-questions').textContent = "0"; // To be linked to QuestionBank
+            document.getElementById('count-outcomes').textContent = "0"; // To be linked to COs
+            document.getElementById('count-qps').textContent = "0";
+        });
+
+        // Logout function
+        function handleLogout() {
+            Auth.logout();
+        }
+    </script>
+
+    <!-- Core Modules -->
+    <script src="../js/db.js"></script>
+    <script src="../js/auth.js"></script>
+
+</body>
+
+</html>

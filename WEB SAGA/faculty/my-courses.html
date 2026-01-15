@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Faculty Courses - WEBSAGA</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+  <link rel="stylesheet" href="../admin/admin-style.css">
+
+  <style>
+    .course-card {
+      border-left: 4px solid var(--primary-color)
+    }
+
+    .hidden {
+      display: none
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- NAVBAR -->
+  <nav class="navbar navbar-expand-lg fixed-top">
+    <div class="container-fluid px-4">
+      <button class="btn btn-link me-3 fs-4" id="sidebarToggle">
+        <i class="bi bi-list"></i>
+      </button>
+      <a class="navbar-brand" href="Fdashboard.html">
+        <i class="bi bi-mortarboard-fill me-2"></i>WEBSAGA Faculty
+      </a>
+      <div class="ms-auto">
+        <a href="../auth/change-password.html" class="text-muted me-4 small text-decoration-none">
+          <i class="bi bi-key"></i> Change Password
+        </a>
+        <a href="#" class="text-danger text-decoration-none" onclick="handleLogout();return false;">
+          Logout <i class="bi bi-box-arrow-right"></i>
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- SIDEBAR -->
+  <div class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <h4>FACULTY PANEL</h4>
+    </div>
+    <ul class="sidebar-menu mt-3">
+      <li><a href="Fdashboard.html"><i class="bi bi-speedometer2"></i> Dashboard</a></li>
+      <li><a href="my-courses.html" class="active"><i class="bi bi-book"></i> My Courses</a></li>
+      <li><a href="course-outcomes.html"><i class="bi bi-bullseye"></i> Course Outcomes</a></li>
+      <li class="section-title sidebar-text mt-4">QUESTION PAPER</li>
+      <li><a href="generate-qp.html"><i class="bi bi-file-earmark-text"></i> Generate QP</a></li>
+    </ul>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main-content">
+    <div class="container-fluid py-4">
+
+      <h3 class="mb-4"><i class="bi bi-book"></i> My Courses</h3>
+
+      <div class="row" id="courseContainer"></div>
+
+      <div class="card mt-4 hidden" id="resultSection">
+        <div class="card-header">
+          <h5 id="resultTitle"></h5>
+        </div>
+        <div class="card-body" id="resultBody"></div>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+  <script>
+    /* SIDEBAR */
+    sidebarToggle.onclick = () => sidebar.classList.toggle("collapsed");
+
+    /* LOGOUT */
+    function handleLogout() {
+      if (confirm("Logout?")) {
+        localStorage.removeItem("currentUser");
+        localStorage.removeItem("isLoggedIn");
+        location.href = "../main.html";
+      }
+    }
+
+    /* ================= DYNAMIC DATA LOADING ================= */
+    document.addEventListener("DOMContentLoaded", () => {
+      const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+      if (!currentUser) {
+        alert("Please login first.");
+        window.location.href = "../main.html";
+        return;
+      }
+
+      // 1. Get All Courses
+      // Default fallbacks if user hasn't visited admin pages yet (simulating DB presence)
+      let allCourses = JSON.parse(localStorage.getItem("wsg_courses") || "[]");
+      if (allCourses.length === 0) {
+        // Fallback defaults purely for demo if admin page wasn't visited
+        allCourses = [
+          // CSE
+          { code: "21CS301T", name: "Data Structures and Algorithms", branch: "CSE", regulation: "AR21", year: "II", sem: "III", type: "Theory", elective: "Core", credits: "4", status: "Active" },
+          { code: "21CS302T", name: "Python Programming", branch: "CSE", regulation: "AR21", year: "II", sem: "III", type: "Theory", elective: "Core", credits: "3", status: "Active" },
+          { code: "21CS304P", name: "Python Programming Laboratory", branch: "CSE", regulation: "AR21", year: "II", sem: "III", type: "Lab", elective: "Core", credits: "1.5", status: "Active" },
+          { code: "23CS401T", name: "Operating Systems", branch: "CSE", regulation: "AR23", year: "III", sem: "V", type: "Theory", elective: "Core", credits: "4", status: "Active" },
+          { code: "23CS402T", name: "Database Management Systems", branch: "CSE", regulation: "AR23", year: "III", sem: "V", type: "Theory", elective: "Core", credits: "4", status: "Active" },
+          // IT
+          { code: "21IT301T", name: "Web Technologies", branch: "IT", regulation: "AR21", year: "II", sem: "III", type: "Theory", elective: "Core", credits: "3", status: "Active" },
+          { code: "21IT302P", name: "Web Technologies Lab", branch: "IT", regulation: "AR21", year: "II", sem: "III", type: "Lab", elective: "Core", credits: "1.5", status: "Active" },
+          // AIML
+          { code: "21AM301T", name: "Introduction to AI", branch: "AIML", regulation: "AR21", year: "II", sem: "III", type: "Theory", elective: "Core", credits: "3", status: "Active" },
+          // AIDS
+          { code: "21AD301T", name: "Data Science Fundamentals", branch: "AIDS", regulation: "AR21", year: "II", sem: "III", type: "Theory", elective: "Core", credits: "4", status: "Active" },
+          // CSBS
+          { code: "21CB301T", name: "Business Systems Analysis", branch: "CSBS", regulation: "AR21", year: "II", sem: "III", type: "Theory", elective: "Core", credits: "3", status: "Active" }
+        ];
+      }
+
+      // 2. Determine Courses for this Faculty
+      // Strategy: Look for explicit mapping -> If none, show all courses for their Branch.
+      const mappings = JSON.parse(localStorage.getItem("wsg_faculty_course_mapping") || "[]");
+      // Try simple match by Name or EmpID if stored in mappings (assumed format)
+      // Since we don't have mapping UI running yet, we'll use the BRANCH-BASED fallback which is robust.
+
+      let myCourses = [];
+
+      // Check explicit mapping (Schema assumption: facultyId, courseId)
+      // We'll search for this user's ID/EmpID.
+      // Since we don't know the exact ID without looking up wsg_faculty, we use Branch matching as primary 'Interlink'.
+
+      // Find faculty details to get Branch (User object from login might have it, else search wsg_faculty)
+      const allFaculty = JSON.parse(localStorage.getItem("wsg_faculty") || "[]");
+      const facultyProfile = allFaculty.find(f => f.empId === currentUser.empId || f.email === currentUser.email);
+
+      if (facultyProfile && facultyProfile.branch) {
+        // Filter courses by Faculty's Branch
+        myCourses = allCourses.filter(c => c.branch === facultyProfile.branch && c.status === 'Active');
+      } else {
+        // Fallback: Show all just to be safe if matching fails
+        myCourses = allCourses.filter(c => c.status === 'Active');
+      }
+
+      // 3. Render
+      const container = document.getElementById("courseContainer");
+      container.innerHTML = "";
+
+      if (myCourses.length === 0) {
+        container.innerHTML = `<div class="col-12 text-center text-muted">No courses assigned to your branch (${facultyProfile ? facultyProfile.branch : 'Unknown'}). Contact Admin.</div>`;
+        return;
+      }
+
+      // 4. Fetch Dynamic Content from Storage (Real Interlinking)
+
+      // Load stored matching data
+      const storedCos = JSON.parse(localStorage.getItem('wsg_course_outcomes')) || {};
+      const storedQuestions = JSON.parse(localStorage.getItem('websaga_qbank_data')) || {};
+
+      // Global function scope for buttons
+      window.myData = {
+        outcomes: {},
+        questions: []
+      };
+
+      myCourses.forEach((c) => {
+        // Filter COs for this course
+        // coData structure is object with IDs. Convert to array.
+        const courseCos = Object.values(storedCos).filter(co => co.course === c.code && co.status === 'active');
+
+        if (courseCos.length > 0) {
+          window.myData.outcomes[c.code] = courseCos.map(Item => `<b>${Item.code}:</b> ${Item.desc}`);
+        } else {
+          // Fallback if no COs defined yet for this course
+          window.myData.outcomes[c.code] = ["No Course Outcomes defined in CO Management."];
+        }
+
+        // Filter Questions for this course
+        const courseQs = Object.values(storedQuestions).filter(q => q.course === c.code);
+        courseQs.forEach(q => {
+          window.myData.questions.push(q);
+        });
+
+        // Render Card
+        container.innerHTML += `
+              <div class="col-md-4 mb-3">
+                <div class="card course-card h-100 shadow-sm">
+                  <div class="card-body">
+                    <h5 class="card-title">${c.name}</h5>
+                    <div class="badge bg-light text-dark mb-2">${c.code}</div>
+                    <p class="small text-muted mb-3">${c.branch} | ${c.regulation || 'Reg'}</p>
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-sm btn-primary flex-fill" onclick="showCOs('${c.code}', '${c.name}')">COs</button>
+                    </div>
+                  </div>
+                </div>
+              </div>`;
+      });
+    });
+
+    /* ================= VIEW HANDLERS ================= */
+    function showCOs(code, name) {
+      document.getElementById("resultSection").classList.remove("hidden");
+      document.getElementById("resultTitle").innerText = `Course Outcomes – ${name} (${code})`;
+
+      const cos = window.myData.outcomes[code] || ["No outcomes defined."];
+      let html = "<ul class='list-group list-group-flush'>";
+      cos.forEach(c => html += `<li class="list-group-item"><i class="bi bi-check2-circle text-success me-2"></i>${c}</li>`);
+      html += "</ul>";
+      document.getElementById("resultBody").innerHTML = html;
+      document.getElementById("resultSection").scrollIntoView({ behavior: "smooth" });
+    }
+
+    function showQuestions(code, name) {
+      document.getElementById("resultSection").classList.remove("hidden");
+      document.getElementById("resultTitle").innerText = `Question Bank – ${name} (${code})`;
+
+      const qs = window.myData.questions.filter(q => q.course === code);
+
+      let html = `
+      <div class="table-responsive">
+      <table class="table table-hover align-middle">
+      <thead class="table-light">
+      <tr>
+        <th>ID</th><th>Question</th><th>CO</th>
+        <th>Bloom</th><th>Diff</th><th>M</th>
+      </tr>
+      </thead><tbody>`;
+
+      if (qs.length === 0) {
+        html += `<tr><td colspan="6" class="text-center">No questions generated.</td></tr>`;
+      } else {
+        qs.forEach(q => {
+          const badge = q.difficulty === "Easy" ? "bg-success" : q.difficulty === "Medium" ? "bg-warning" : "bg-danger";
+          html += `
+            <tr>
+              <td>${q.id}</td>
+              <td>${q.text}</td>
+              <td>${q.co}</td>
+              <td>${q.bloom}</td>
+              <td><span class="badge ${badge}">${q.difficulty}</span></td>
+              <td>${q.marks}</td>
+            </tr>`;
+        });
+      }
+      html += "</tbody></table></div>";
+      document.getElementById("resultBody").innerHTML = html;
+      document.getElementById("resultSection").scrollIntoView({ behavior: "smooth" });
+    }
+  </script>
+
+</body>
+
+</html>

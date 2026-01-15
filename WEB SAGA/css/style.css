@@ -1,0 +1,467 @@
+/* ============================================
+   WEBSAGA - Academic ERP System
+   Common Stylesheet
+   ============================================ */
+
+@import url("theme.css");
+:root {
+    --primary-color: #2c3e50;
+    --secondary-color: #3498db;
+    --success-color: #27ae60;
+    --danger-color: #e74c3c;
+    --warning-color: #f39c12;
+    --info-color: #17a2b8;
+    --light-bg: #f8f9fa;
+    --sidebar-width: 250px;
+    --navbar-height: 60px;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--light-bg);
+    color: #333;
+}
+
+/* ============================================
+   Sidebar Styles
+   ============================================ */
+.sidebar {
+    position: fixed;
+    top: var(--navbar-height);
+    left: 0;
+    height: calc(100vh - var(--navbar-height));
+    width: var(--sidebar-width);
+    background: linear-gradient(180deg, var(--primary-color) 0%, #1a252f 100%);
+    color: white;
+    overflow-y: auto;
+    z-index: 1000;
+    transition: transform 0.3s ease;
+}
+
+.sidebar::-webkit-scrollbar {
+    width: 6px;
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 3px;
+}
+
+.sidebar-header {
+    padding: 20px;
+    text-align: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.sidebar-header h4 {
+    color: white;
+    font-weight: 600;
+    margin: 0;
+}
+
+.sidebar-menu {
+    list-style: none;
+    padding: 10px 0;
+}
+
+.sidebar-menu li {
+    margin: 5px 0;
+}
+
+.sidebar-menu a {
+    display: block;
+    padding: 12px 20px;
+    color: rgba(255, 255, 255, 0.8);
+    text-decoration: none;
+    transition: all 0.3s ease;
+    border-left: 3px solid transparent;
+}
+
+.sidebar-menu a:hover,
+.sidebar-menu a.active {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: white;
+    border-left-color: var(--secondary-color);
+}
+
+.sidebar-menu .menu-section {
+    padding: 10px 20px;
+    font-size: 12px;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.5);
+    font-weight: 600;
+    letter-spacing: 1px;
+}
+
+/* ============================================
+   Navbar Styles
+   ============================================ */
+.navbar-custom {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: var(--navbar-height);
+    background: white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    z-index: 1001;
+    padding: 0 20px;
+}
+
+.navbar-brand {
+    font-weight: 700;
+    font-size: 1.5rem;
+    color: var(--primary-color) !important;
+}
+
+.navbar-nav .nav-link {
+    color: #333 !important;
+    padding: 0 15px;
+    transition: color 0.3s ease;
+}
+
+.navbar-nav .nav-link:hover {
+    color: var(--secondary-color) !important;
+}
+
+/* ============================================
+   Main Content Area
+   ============================================ */
+.main-content {
+    margin-left: var(--sidebar-width);
+    margin-top: var(--navbar-height);
+    padding: 30px;
+    min-height: calc(100vh - var(--navbar-height));
+}
+
+.page-header {
+    margin-bottom: 30px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid var(--light-bg);
+}
+
+.page-header h2 {
+    color: var(--primary-color);
+    font-weight: 600;
+    margin: 0;
+}
+
+.page-header p {
+    color: #6c757d;
+    margin: 5px 0 0 0;
+}
+
+/* ============================================
+   Card Styles
+   ============================================ */
+.card {
+    border: none;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.card-header {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    color: white;
+    padding: 15px 20px;
+    border-radius: 8px 8px 0 0 !important;
+    font-weight: 600;
+}
+
+.card-body {
+    padding: 20px;
+}
+
+/* ============================================
+   Button Styles
+   ============================================ */
+.btn {
+    border-radius: 5px;
+    padding: 8px 20px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.btn-primary {
+    background-color: var(--secondary-color);
+    border-color: var(--secondary-color);
+}
+
+.btn-primary:hover {
+    background-color: #2980b9;
+    border-color: #2980b9;
+    transform: translateY(-1px);
+}
+
+.btn-success {
+    background-color: var(--success-color);
+    border-color: var(--success-color);
+}
+
+.btn-danger {
+    background-color: var(--danger-color);
+    border-color: var(--danger-color);
+}
+
+.btn-warning {
+    background-color: var(--warning-color);
+    border-color: var(--warning-color);
+}
+
+/* ============================================
+   Table Styles
+   ============================================ */
+.table {
+    background: white;
+}
+
+.table thead {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.table thead th {
+    border: none;
+    padding: 12px;
+    font-weight: 600;
+}
+
+.table tbody tr {
+    transition: background-color 0.3s ease;
+}
+
+.table tbody tr:hover {
+    background-color: #f8f9fa;
+}
+
+.table tbody td {
+    padding: 12px;
+    vertical-align: middle;
+}
+
+/* ============================================
+   Form Styles
+   ============================================ */
+.form-label {
+    font-weight: 600;
+    color: var(--primary-color);
+    margin-bottom: 8px;
+}
+
+.form-control,
+.form-select {
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    padding: 10px 15px;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.form-control:focus,
+.form-select:focus {
+    border-color: var(--secondary-color);
+    box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.25);
+}
+
+.form-control.is-invalid,
+.form-select.is-invalid {
+    border-color: var(--danger-color);
+}
+
+/* ============================================
+   Status Badge Styles
+   ============================================ */
+.badge {
+    padding: 6px 12px;
+    font-weight: 500;
+    border-radius: 20px;
+}
+
+.status-active {
+    background-color: var(--success-color);
+    color: white;
+}
+
+.status-inactive {
+    background-color: #95a5a6;
+    color: white;
+}
+
+/* ============================================
+   Toggle Switch Styles
+   ============================================ */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 24px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: 0.4s;
+    border-radius: 24px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: 0.4s;
+    border-radius: 50%;
+}
+
+input:checked + .slider {
+    background-color: var(--success-color);
+}
+
+input:checked + .slider:before {
+    transform: translateX(26px);
+}
+
+/* ============================================
+   Modal Styles
+   ============================================ */
+.modal-header {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    color: white;
+    border-radius: 8px 8px 0 0;
+}
+
+.modal-header .btn-close {
+    filter: invert(1);
+}
+
+/* ============================================
+   Dashboard Stats Cards
+   ============================================ */
+.stat-card {
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+}
+
+.stat-card .stat-icon {
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+}
+
+.stat-card .stat-value {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--primary-color);
+}
+
+.stat-card .stat-label {
+    color: #6c757d;
+    font-size: 0.9rem;
+    margin-top: 5px;
+}
+
+/* ============================================
+   Responsive Styles
+   ============================================ */
+@media (max-width: 768px) {
+    .sidebar {
+        transform: translateX(-100%);
+    }
+
+    .sidebar.show {
+        transform: translateX(0);
+    }
+
+    .main-content {
+        margin-left: 0;
+        padding: 20px 15px;
+    }
+
+    .navbar-toggler {
+        display: block;
+    }
+}
+
+@media (min-width: 769px) {
+    .navbar-toggler {
+        display: none;
+    }
+}
+
+/* ============================================
+   Utility Classes
+   ============================================ */
+.text-primary-custom {
+    color: var(--primary-color) !important;
+}
+
+.bg-primary-custom {
+    background-color: var(--primary-color) !important;
+}
+
+.shadow-sm-custom {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* ============================================
+   Loading Spinner
+   ============================================ */
+.spinner-border-sm {
+    width: 1rem;
+    height: 1rem;
+    border-width: 0.15em;
+}
+
+/* ============================================
+   Print Styles
+   ============================================ */
+@media print {
+    .sidebar,
+    .navbar-custom,
+    .btn,
+    .no-print {
+        display: none !important;
+    }
+
+    .main-content {
+        margin: 0;
+        padding: 0;
+    }
+
+    .card {
+        box-shadow: none;
+        border: 1px solid #ddd;
+    }
+}
